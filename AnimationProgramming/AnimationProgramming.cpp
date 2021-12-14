@@ -6,6 +6,8 @@
 #include "Engine.h"
 #include "Simulation.h"
 
+#include "../Include/SkeletalMesh.h"
+
 #include "../Include/Maths/Matrix.h"
 #include "../Include/Maths/Quaternion.h"
 
@@ -13,7 +15,7 @@ Mat4x4 GetLocalTRS(const char* animName, int boneIndex, int keyFrameIndex)
 {
 	Vector3f position;
 	Quaternion rotation;
-	GetSkeletonBoneLocalBindTransform(boneIndex, position.x, position.y, position.z, rotation.w, rotation.x, rotation.y, rotation.z);
+	GetAnimLocalBoneTransform(animName, boneIndex, keyFrameIndex, position.x, position.y, position.z, rotation.w, rotation.x, rotation.y, rotation.z);
 
 	Mat4x4 translation = Maths::translate(Vector3f(position));
 	Mat4x4 rotMat = rotation.toMatrix();
@@ -34,6 +36,8 @@ class CSimulation : public ISimulation
 {
 	int key = 0;
 
+	SkeletalMesh skeleton;
+
 	virtual void Init() override
 	{
 		system("PAUSE");
@@ -49,6 +53,8 @@ class CSimulation : public ISimulation
 		printf("Spine parent bone : %s\n", spineParentName);
 		printf("Anim key count : %ld\n", keyCount);
 		printf("Anim key : pos(%.2f,%.2f,%.2f) rotation quat(%.10f,%.10f,%.10f,%.10f)\n", posX, posY, posZ, quatW, quatX, quatY, quatZ);
+
+		skeleton.Create();
 	}
 
 	virtual void Update(float frameTime) override
@@ -64,22 +70,18 @@ class CSimulation : public ISimulation
 
 		float zOffset = -50.f;
 
-		for (int i = 0; i < GetSkeletonBoneCount() - 7; i++)
+		for (auto& [boneID, bone] : skeleton.bones)
 		{
-			int spineParent = GetSkeletonBoneParentIndex(i);
+			Bone* parent = bone->parent;
 
-
-			if (spineParent == -1)
+			if (!parent)
 				continue;
 
-			Mat4x4 currentTR = GetGlobalBoneTransform("ThirdPersonWalk.anim", i, 0);
-			Mat4x4 parentTR = GetGlobalBoneTransform("ThirdPersonWalk.anim", spineParent, 0);
+			Vector3f& currentPos = bone->globalRestTransform.getPosition();
+			Vector3f& parentPos = parent->globalRestTransform.getPosition();
 
-			Vector3f currentPos = { currentTR.e[3], currentTR.e[7], currentTR.e[11] };
-			Vector3f parentPos = { parentTR.e[3], parentTR.e[7], parentTR.e[11] };
-
-			if (GetSkeletonBoneParentIndex(spineParent) == -1)
-			 DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 0, 1, 0);
+			if (!parent->parent)
+				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 0, 1, 0);
 			else
 				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 1, 0, 0);
 		}

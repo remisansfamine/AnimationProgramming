@@ -26,8 +26,8 @@ namespace Maths
 		//	Parameters : none
 		//	-----------------
 		Quaternion toQuaternion();
+		Vector3f getPosition();
 	};
-
 
 	//	Mat4x4 Functions
 	//	----------------
@@ -41,24 +41,9 @@ namespace Maths
 	//	Return a scaled Mat4x
 	//	Parameters : const Vector3f scale
 	//	--------------------------------- 
-	Mat4x4 scale(const Vector3f scale);
+	Mat4x4 scale(const Vector3f& scale);
 
-	//	Return a rotated Mat4x on  x axis
-	//	Parameters : const float angleRadians
-	//	-------------------------------------
-	Mat4x4 rotateX(const float angleRadians);
-
-	//	Return a rotated Mat4x on  y axis
-	//	Parameters : const float angleRadians
-	//	-------------------------------------
-	Mat4x4 rotateY(const float angleRadians);
-
-	//	Return a rotated Mat4x on  z axis
-	//	Parameters : const float angleRadians
-	//	-------------------------------------
-	Mat4x4 rotateZ(const float angleRadians);
-	Mat4x4 translate(Vector3f a);
-
+	Mat4x4 translate(const Vector3f& a);
 
 	//	Operators
 	//	---------

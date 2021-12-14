@@ -90,18 +90,6 @@ inline Vector3f Maths::zVector3(const float z)
 	return { 0.f,0.f,z };
 };
 
-/*
-inline Vector3f	Maths::vector3Zero()
-{
-	return { 0.f ,0.f ,0.f };
-}
-
-inline Vector3f Maths::vector3One()
-{
-	return { 1.f ,1.f ,1.f };
-}
-*/
-
 inline Vector3f Maths::vector3Reflect(const Vector3f& in, const Vector3f& normal)
 {
 	return in - normal * (2 * (dotProduct(in, normal)));

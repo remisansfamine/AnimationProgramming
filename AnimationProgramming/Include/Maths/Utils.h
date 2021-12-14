@@ -13,42 +13,31 @@ namespace Maths
 	//	Parameters : Type a, Type b
 	//	---------------------------
 	template<typename T>
-	T min(T a, T b);
+	T min(const T& a, const T& b);
 
 	//	Return maximum value between two values
 	//	Parameters : Type a, Type b
 	//	---------------------------
 	template<typename T>
-	T max(T a, T b);
+	T max(const T& a, const T& b);
 
 	//	Return a clamped value between two values
 	//	Parameters : Type value, Type min, Type max
 	//	-------------------------------------------
 	template<typename T>
-	T clamp(T value, T min, T max);
-
-	//	Return a looped value between two values
-	//	Parameters : Type value, Type min, Type max
-	//	-------------------------------------------
-	template<typename T>
-	T loop(T value, T min, T max);
+	T clamp(const T& value, const T& min, const T& max);
 
 	//	Return a mapped value between two values
 	//	Parameters : Type value, Type min1, Type max1, Type min2, Type max2
 	//	-------------------------------------------------------------------
 	template<typename T>
-	T map(T value, T min1, T max1, T min2, T max2);
+	T map(const T& value, const T& min1, const T& max1, const T& min2, const T& max2);
 
 	//	Return a lerped value betwween two values
 	//	Parameters : Type value, Type min, Type max,
 	//	-------------------------------------------------------------------
-	template <typename T>
-	T lerp(T a, T x, T y);
-
-	//	Switch boolean to its inverse
-	//	Parameters : bool& a
-	//	--------------------
-	void switchBoolean(bool& a);
+	template <typename T, typename S>
+	T lerp(S a, const T& x, const T& y);
 }
 
 #include "../../Inline/Maths/Utils.inl"

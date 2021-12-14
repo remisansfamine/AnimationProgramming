@@ -92,6 +92,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>D:\GitHub\WhiteBoxEngine - Copie\Core\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -125,6 +126,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>D:\GitHub\WhiteBoxEngine - Copie\Core\Inc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -157,30 +159,34 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Maths\Matrix.h" />
-    <ClInclude Include="..\Include\Maths\Quaternion.h" />
-    <ClInclude Include="..\Include\Maths\Utils.h" />
-    <ClInclude Include="..\Include\Maths\Vector3.h" />
-    <ClInclude Include="..\Include\Maths\Vector4.h" />
     <ClInclude Include="Engine.h" />
+    <ClInclude Include="Include\Bone.h" />
+    <ClInclude Include="Include\Maths\Matrix.h" />
+    <ClInclude Include="Include\Maths\Quaternion.h" />
+    <ClInclude Include="Include\Maths\Utils.h" />
+    <ClInclude Include="Include\Maths\Vector3.h" />
+    <ClInclude Include="Include\Maths\Vector4.h" />
+    <ClInclude Include="Include\SkeletalMesh.h" />
     <ClInclude Include="Simulation.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Src\Maths\Matrix.cpp" />
-    <ClCompile Include="..\Src\Maths\Quaternion.cpp" />
-    <ClCompile Include="..\Src\Maths\Vector3.cpp" />
-    <ClCompile Include="..\Src\Maths\Vector4.cpp" />
     <ClCompile Include="AnimationProgramming.cpp" />
+    <ClCompile Include="Src\Bone.cpp" />
+    <ClCompile Include="Src\Maths\Matrix.cpp" />
+    <ClCompile Include="Src\Maths\Quaternion.cpp" />
+    <ClCompile Include="Src\Maths\Vector3.cpp" />
+    <ClCompile Include="Src\Maths\Vector4.cpp" />
+    <ClCompile Include="Src\SkeletalMesh.cpp" />
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\Inline\Maths\Matrix.inl" />
-    <None Include="..\Inline\Maths\Quaternion.inl" />
-    <None Include="..\Inline\Maths\Utils.inl" />
-    <None Include="..\Inline\Maths\Vector3.inl" />
-    <None Include="..\Inline\Maths\Vector4.inl" />
+    <None Include="Inline\Maths\Matrix.inl" />
+    <None Include="Inline\Maths\Quaternion.inl" />
+    <None Include="Inline\Maths\Utils.inl" />
+    <None Include="Inline\Maths\Vector3.inl" />
+    <None Include="Inline\Maths\Vector4.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

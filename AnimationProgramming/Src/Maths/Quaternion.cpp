@@ -240,3 +240,8 @@ Maths::Quaternion Maths::Mat4x4::toQuaternion()
 
     return result;
 }
+
+Maths::Vector3f Maths::Mat4x4::getPosition()
+{
+    return { e[3], e[7], e[11] };
+}
