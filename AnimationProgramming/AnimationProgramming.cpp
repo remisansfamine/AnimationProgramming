@@ -14,7 +14,7 @@
 class CSimulation : public ISimulation
 {
 	int key = 0;
-	int frame = 0;
+	float frame = 0.f;
 
 	SkeletalMesh skeleton;
 
@@ -35,6 +35,8 @@ class CSimulation : public ISimulation
 		printf("Anim key : pos(%.2f,%.2f,%.2f) rotation quat(%.10f,%.10f,%.10f,%.10f)\n", posX, posY, posZ, quatW, quatX, quatY, quatZ);
 
 		skeleton.Create();
+
+		skeleton.SetAnimation("ThirdPersonWalk.anim");
 	}
 
 	virtual void Update(float frameTime) override
@@ -48,30 +50,16 @@ class CSimulation : public ISimulation
 		// Z axis
 		DrawLine(0, 0, 0, 0, 0, 100, 0, 0, 1);
 
-		float zOffset = -50.f;
+		skeleton.DrawWireframe(frame, key);
 
-		for (auto& [boneID, bone] : skeleton.bones)
-		{
-			Bone* parent = bone->parent;
+		frame += frameTime;
 
-			if (!parent)
-				continue;
-
-			Vector3f currentPos = (bone->GetGlobalBoneTransform("ThirdPersonWalk.anim", key)).getPosition();
-			Vector3f parentPos = (parent->GetGlobalBoneTransform("ThirdPersonWalk.anim", key)).getPosition();
-
-			if (!parent->parent)
-				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 0, 1, 0);
-			else
-				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 1, 0, 0);
-		}
-
-		if (frame++ < 30)
+		if (frame < 1.f)
 			return;
 
-		frame = frame % 30;
+		frame = 0.f;
 
-		key = (key + 1) % GetAnimKeyCount("ThirdPersonWalk.anim");
+		key++;
 	}
 };
 

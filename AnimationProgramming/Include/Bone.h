@@ -8,16 +8,16 @@ struct Bone
 	Bone* parent = nullptr;
 	size_t ID = -1;
 
-	Bone(size_t ID) : ID(ID) { }
+	Bone(size_t ID, Bone* parent = nullptr);
 
 	Mat4x4 localRestTransform = mat4x4Identity();
 	Mat4x4 globalRestTransform = mat4x4Identity();
 
-	Mat4x4 GetLocalRestTRS();
+	Mat4x4 GetLocalRestTransform();
 
-	Mat4x4 GetGlobalRestTRS();
+	Mat4x4 GetGlobalRestTransform();
 
-	Mat4x4 GetLocalTRS(const char* animName, int keyFrameIndex);
+	Mat4x4 GetLocalAnimTransform(const char* animName, float frameTime, int keyFrame, int nextKeyFrame);
 
-	Mat4x4 GetGlobalBoneTransform(const char* animName, int keyFrameIndex);
+	Mat4x4 GetGlobalAnimTransform(const char* animName, float frameTime, int keyFrame, int nextKeyFrame);
 };

@@ -134,9 +134,13 @@ namespace Maths
 	//	------------------
 	Quaternion operator*(const Quaternion& q, float value);
 
+	Quaternion operator*(float value, const Quaternion& q);
+
 	//	Quaternion x Mat4x4
 	//	-------------------
 	Quaternion operator*(const Quaternion& q, Mat4x4 mat);
+
+	Quaternion Slerp(float lambda, Quaternion a, Quaternion b);
 }
 
 #include "../../Inline/Maths/Quaternion.inl"

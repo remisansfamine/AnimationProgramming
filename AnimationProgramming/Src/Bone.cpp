@@ -2,7 +2,13 @@
 
 #include "../Engine.h"
 
-Mat4x4 Bone::GetLocalRestTRS()
+Bone::Bone(size_t ID, Bone* parent)
+	: ID(ID), parent(parent)
+{
+
+}
+
+Mat4x4 Bone::GetLocalRestTransform()
 {
 	Vector3f position;
 	Quaternion rotation;
@@ -14,19 +20,27 @@ Mat4x4 Bone::GetLocalRestTRS()
 	return translation * rotMat;
 }
 
-Mat4x4 Bone::GetGlobalRestTRS()
+Mat4x4 Bone::GetGlobalRestTransform()
 {
 	if (!parent)
 		return localRestTransform;
 
-	return parent->GetGlobalRestTRS() * localRestTransform;
+	return parent->GetGlobalRestTransform() * localRestTransform;
 }
 
-Mat4x4 Bone::GetLocalTRS(const char* animName, int keyFrameIndex)
+Mat4x4 Bone::GetLocalAnimTransform(const char* animName, float frameTime, int keyFrameIndex, int nextKeyFrame)
 {
-	Vector3f position;
-	Quaternion rotation;
-	GetAnimLocalBoneTransform(animName, ID, keyFrameIndex, position.x, position.y, position.z, rotation.w, rotation.x, rotation.y, rotation.z);
+	Vector3f curPosition;
+	Quaternion curRotation;
+	GetAnimLocalBoneTransform(animName, ID, keyFrameIndex, curPosition.x, curPosition.y, curPosition.z, curRotation.w, curRotation.x, curRotation.y, curRotation.z);
+
+	Vector3f nextPosition;
+	Quaternion nextRotation;
+	GetAnimLocalBoneTransform(animName, ID, nextKeyFrame, nextPosition.x, nextPosition.y, nextPosition.z, nextRotation.w, nextRotation.x, nextRotation.y, nextRotation.z);
+
+	Vector3f position = Maths::lerp(frameTime , curPosition, nextPosition);
+	Quaternion rotation = Maths::Slerp(frameTime, curRotation, nextRotation);
+	
 
 	Mat4x4 translation = Maths::translate(Vector3f(position));
 	Mat4x4 rotMat = rotation.toMatrix();
@@ -34,10 +48,10 @@ Mat4x4 Bone::GetLocalTRS(const char* animName, int keyFrameIndex)
 	return translation * rotMat;
 }
 
-Mat4x4 Bone::GetGlobalBoneTransform(const char* animName, int keyFrameIndex)
+Mat4x4 Bone::GetGlobalAnimTransform(const char* animName, float frameTime, int keyFrame, int nextKeyFrame)
 {
 	if (!parent)
-		return localRestTransform * GetLocalTRS(animName, keyFrameIndex);
+		return localRestTransform * GetLocalAnimTransform(animName, frameTime, keyFrame, nextKeyFrame);
 
-	return parent->GetGlobalBoneTransform(animName, keyFrameIndex) * localRestTransform * GetLocalTRS(animName, keyFrameIndex);
+	return parent->GetGlobalAnimTransform(animName, frameTime, keyFrame, nextKeyFrame) * localRestTransform * GetLocalAnimTransform(animName, frameTime, keyFrame, nextKeyFrame);
 }
