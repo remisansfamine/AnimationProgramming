@@ -12,6 +12,27 @@ namespace Maths
         };
     }
 
+    inline Mat4x4 transpose(const Mat4x4& in)
+    {
+        return
+        {
+            in.e[0], in.e[4], in.e[8] , in.e[12],
+            in.e[1], in.e[5], in.e[9] , in.e[13],
+            in.e[2], in.e[6], in.e[10], in.e[14],
+            in.e[3], in.e[7], in.e[11], in.e[15]
+        };
+    }
+
+    inline Mat4x4 invert(const Mat4x4& in)
+    {
+
+    }
+
+    inline float determinant(const Mat4x4& in)
+    {
+
+    }
+
     inline Mat4x4 operator*(const float& a, const Mat4x4& b)
     {
         Mat4x4 to_return = mat4x4Identity();

@@ -45,6 +45,13 @@ namespace Maths
 
 	Mat4x4 translate(const Vector3f& a);
 
+	Mat4x4 transpose(const Mat4x4& in);
+
+	Mat4x4 invert(const Mat4x4& in);
+	
+	float determinant(const Mat4x4& in);
+
+
 	//	Operators
 	//	---------
 

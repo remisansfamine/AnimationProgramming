@@ -11,30 +11,10 @@
 #include "../Include/Maths/Matrix.h"
 #include "../Include/Maths/Quaternion.h"
 
-Mat4x4 GetLocalTRS(const char* animName, int boneIndex, int keyFrameIndex)
-{
-	Vector3f position;
-	Quaternion rotation;
-	GetAnimLocalBoneTransform(animName, boneIndex, keyFrameIndex, position.x, position.y, position.z, rotation.w, rotation.x, rotation.y, rotation.z);
-
-	Mat4x4 translation = Maths::translate(Vector3f(position));
-	Mat4x4 rotMat = rotation.toMatrix();
-
-	return translation * rotMat;
-}
-
-Mat4x4 GetGlobalBoneTransform(const char* animName, int boneIndex, int keyFrameIndex)
-{
-	int parentIndex = GetSkeletonBoneParentIndex(boneIndex);
-	if (parentIndex == -1)
-		return GetLocalTRS(animName, boneIndex, keyFrameIndex);
-
-	return GetGlobalBoneTransform(animName, parentIndex, keyFrameIndex) * GetLocalTRS(animName, boneIndex, keyFrameIndex);
-}
-
 class CSimulation : public ISimulation
 {
 	int key = 0;
+	int frame = 0;
 
 	SkeletalMesh skeleton;
 
@@ -77,14 +57,19 @@ class CSimulation : public ISimulation
 			if (!parent)
 				continue;
 
-			Vector3f& currentPos = bone->globalRestTransform.getPosition();
-			Vector3f& parentPos = parent->globalRestTransform.getPosition();
+			Vector3f currentPos = (bone->GetGlobalBoneTransform("ThirdPersonWalk.anim", key)).getPosition();
+			Vector3f parentPos = (parent->GetGlobalBoneTransform("ThirdPersonWalk.anim", key)).getPosition();
 
 			if (!parent->parent)
 				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 0, 1, 0);
 			else
 				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 1, 0, 0);
 		}
+
+		if (frame++ < 30)
+			return;
+
+		frame = frame % 30;
 
 		key = (key + 1) % GetAnimKeyCount("ThirdPersonWalk.anim");
 	}

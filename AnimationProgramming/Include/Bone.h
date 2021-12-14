@@ -16,4 +16,8 @@ struct Bone
 	Mat4x4 GetLocalRestTRS();
 
 	Mat4x4 GetGlobalRestTRS();
+
+	Mat4x4 GetLocalTRS(const char* animName, int keyFrameIndex);
+
+	Mat4x4 GetGlobalBoneTransform(const char* animName, int keyFrameIndex);
 };
