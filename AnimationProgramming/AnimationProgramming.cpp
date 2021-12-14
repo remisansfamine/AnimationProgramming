@@ -6,6 +6,30 @@
 #include "Engine.h"
 #include "Simulation.h"
 
+#include "../Include/Maths/Matrix.h"
+#include "../Include/Maths/Quaternion.h"
+
+Mat4x4 GetLocalTRS(const char* animName, int boneIndex, int keyFrameIndex)
+{
+	Vector3f position;
+	Quaternion rotation;
+	GetSkeletonBoneLocalBindTransform(boneIndex, position.x, position.y, position.z, rotation.w, rotation.x, rotation.y, rotation.z);
+
+	Mat4x4 translation = Maths::translate(Vector3f(position));
+	Mat4x4 rotMat = rotation.toMatrix();
+
+	return translation * rotMat;
+}
+
+Mat4x4 GetGlobalBoneTransform(const char* animName, int boneIndex, int keyFrameIndex)
+{
+	int parentIndex = GetSkeletonBoneParentIndex(boneIndex);
+	if (parentIndex == -1)
+		return GetLocalTRS(animName, boneIndex, keyFrameIndex);
+
+	return GetGlobalBoneTransform(animName, parentIndex, keyFrameIndex) * GetLocalTRS(animName, boneIndex, keyFrameIndex);
+}
+
 class CSimulation : public ISimulation
 {
 	int key = 0;
@@ -38,25 +62,26 @@ class CSimulation : public ISimulation
 		// Z axis
 		DrawLine(0, 0, 0, 0, 0, 100, 0, 0, 1);
 
-		float zOffset = 100.f;
+		float zOffset = -50.f;
 
-		for (int i = 0; i < GetSkeletonBoneCount(); i++)
+		for (int i = 0; i < GetSkeletonBoneCount() - 7; i++)
 		{
 			int spineParent = GetSkeletonBoneParentIndex(i);
 
-			const char* name = GetSkeletonBoneName(i);
 
 			if (spineParent == -1)
 				continue;
 
-			float curPosX, curPosY, curPosZ, curQuatW, curQuatX, curQuatY, curQuatZ;
-			float parentPosX, parentPosY, parentPosZ, parentQuatW, parentQuatX, parentQuatY, parentQuatZ;
+			Mat4x4 currentTR = GetGlobalBoneTransform("ThirdPersonWalk.anim", i, 0);
+			Mat4x4 parentTR = GetGlobalBoneTransform("ThirdPersonWalk.anim", spineParent, 0);
 
-			GetAnimLocalBoneTransform("ThirdPersonWalk.anim", i, key, curPosX, curPosY, curPosZ, curQuatW, curQuatX, curQuatY, curQuatZ);
-			GetAnimLocalBoneTransform("ThirdPersonWalk.anim", spineParent, key, parentPosX, parentPosY, parentPosZ, parentQuatW, parentQuatX, parentQuatY, parentQuatZ);
+			Vector3f currentPos = { currentTR.e[3], currentTR.e[7], currentTR.e[11] };
+			Vector3f parentPos = { parentTR.e[3], parentTR.e[7], parentTR.e[11] };
 
-			DrawLine(curPosX, curPosY + zOffset, curPosZ , parentPosX, parentPosY + zOffset, parentPosZ , 1, 0, 0);
-
+			if (GetSkeletonBoneParentIndex(spineParent) == -1)
+			 DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 0, 1, 0);
+			else
+				DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 1, 0, 0);
 		}
 
 		key = (key + 1) % GetAnimKeyCount("ThirdPersonWalk.anim");

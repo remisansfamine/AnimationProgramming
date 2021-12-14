@@ -30,6 +30,21 @@
     <ClInclude Include="Simulation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Include\Maths\Matrix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Maths\Quaternion.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Maths\Utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Maths\Vector3.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Include\Maths\Vector4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -38,5 +53,34 @@
     <ClCompile Include="AnimationProgramming.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Src\Maths\Matrix.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Maths\Quaternion.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Maths\Vector3.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Src\Maths\Vector4.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\Inline\Maths\Matrix.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="..\Inline\Maths\Quaternion.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="..\Inline\Maths\Utils.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="..\Inline\Maths\Vector3.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="..\Inline\Maths\Vector4.inl">
+      <Filter>Header Files</Filter>
+    </None>
   </ItemGroup>
 </Project>
