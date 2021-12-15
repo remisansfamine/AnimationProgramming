@@ -20,6 +20,7 @@ void SkeletalMesh::Create()
 
 		bone->localRestTransform = bone->GetLocalRestTransform();
 		bone->globalRestTransform = bone->GetGlobalRestTransform();
+		bone->globalRestTransformInv = invert(bone->globalRestTransform);
 	}
 }
 
@@ -36,9 +37,16 @@ void SkeletalMesh::DrawWireframe(float frameTime, int key)
 	int animKey = key % keyCount;
 	int nextKey = (key + 1) % keyCount;
 
+	std::vector<Mat4x4> inversedMatrices;
+
 	for (auto& [boneID, bone] : bones)
 	{
 		Bone* parent = bone->parent;
+
+		Mat4x4 finalMat = bone->GetGlobalAnimTransform(animName.c_str(), frameTime, animKey, nextKey) * bone->globalRestTransformInv;
+
+		finalMat = Maths::transpose(finalMat);
+		inversedMatrices.push_back(finalMat);
 
 		if (!parent)
 			continue;
@@ -52,4 +60,5 @@ void SkeletalMesh::DrawWireframe(float frameTime, int key)
 			DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 1, 0, 0);
 	}
 
+	SetSkinningPose((const float*)inversedMatrices.data(), bones.size());
 }

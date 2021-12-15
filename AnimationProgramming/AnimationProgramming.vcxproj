@@ -182,6 +182,9 @@
     <ClCompile Include="stdafx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Data\Resources\skinning.program" />
+    <None Include="..\Data\Resources\skinning.ps" />
+    <None Include="..\Data\Resources\skinning.vs" />
     <None Include="Inline\Maths\Matrix.inl" />
     <None Include="Inline\Maths\Quaternion.inl" />
     <None Include="Inline\Maths\Utils.inl" />

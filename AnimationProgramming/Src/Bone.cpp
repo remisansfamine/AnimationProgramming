@@ -40,7 +40,6 @@ Mat4x4 Bone::GetLocalAnimTransform(const char* animName, float frameTime, int ke
 
 	Vector3f position = Maths::lerp(frameTime , curPosition, nextPosition);
 	Quaternion rotation = Maths::Slerp(frameTime, curRotation, nextRotation);
-	
 
 	Mat4x4 translation = Maths::translate(Vector3f(position));
 	Mat4x4 rotMat = rotation.toMatrix();

@@ -87,20 +87,20 @@ inline Maths::Quaternion Maths::Slerp(float lambda, const Quaternion& a, const Q
 {
     float cosHalfTheta = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 
-    float sign = cosHalfTheta < 0.f ? -1.f : 1.f;
+    const char sign = cosHalfTheta < 0.f ? -1 : 1;
 
     cosHalfTheta = fabsf(cosHalfTheta);
 
     if (cosHalfTheta >= 1.0f)
         return a;
 
-    float halfTheta = acosf(cosHalfTheta);
-    float oneOverSinHalfTheta = 1.f / sqrtf(1.0f - cosHalfTheta * cosHalfTheta);
+    const float halfTheta = acosf(cosHalfTheta);
+    const float oneOverSinHalfTheta = 1.f / sqrtf(1.0f - cosHalfTheta * cosHalfTheta);
 
-    float phi = lambda * halfTheta;
+    const float phi = lambda * halfTheta;
 
-    float ratioA = sinf(halfTheta - phi) * oneOverSinHalfTheta;
-    float ratioB = sinf(phi) * oneOverSinHalfTheta * sign;
+    const float ratioA = sinf(halfTheta - phi) * oneOverSinHalfTheta;
+    const float ratioB = sinf(phi) * oneOverSinHalfTheta;
 
-    return a * ratioA + b * ratioB;
+    return ratioA * a + ratioB * sign * b;
 }

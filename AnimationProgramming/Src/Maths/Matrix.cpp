@@ -17,13 +17,13 @@ namespace Maths
     }
 
     //  Translation
-    Mat4x4 translate(const Vector3f& a)
+    Mat4x4 translate(const Vector3f& in)
     {
         //  Return 4x4 matrix
         return {
-            1.f ,   0.f ,   0.f ,   a.x ,
-            0.f ,   1.f ,   0.f ,   a.y ,
-            0.f ,   0.f ,   1.f ,   a.z ,
+            1.f ,   0.f ,   0.f ,   in.x,
+            0.f ,   1.f ,   0.f ,   in.y,
+            0.f ,   0.f ,   1.f ,   in.z,
             0.f ,   0.f ,   0.f ,   1.f ,
         };
     }
