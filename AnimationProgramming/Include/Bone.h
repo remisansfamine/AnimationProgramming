@@ -21,9 +21,7 @@ struct Bone
 
 	Mat4x4 GetGlobalRestTransform();
 
-	Mat4x4 GetLocalAnimTransform(const char* animName, float frameTime, int keyFrame, int nextKeyFrame);
+	Mat4x4 GetLocalAnimTransform(class Animation* animation, float frameTime, int keyFrame, int nextKeyFrame);
 
-	Mat4x4 GetGlobalAnimTransform(const char* animName, float frameTime, int keyFrame, int nextKeyFrame);
-
-	void Compute(std::vector<Mat4x4>& inversedMatrix, const Mat4x4& parentMat, const char* animName, float frameTime, int keyFrame, int nextKeyFrame);
+	Mat4x4 GetGlobalAnimTransform(class Animation* animation, float frameTime, int keyFrame, int nextKeyFrame);
 };

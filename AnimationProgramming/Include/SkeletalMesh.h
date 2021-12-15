@@ -4,6 +4,8 @@
 
 #include "../stdafx.h"
 
+#include "../Include/Animation.hpp"
+
 struct SkeletalMesh
 {
 	std::unordered_map<size_t, std::unique_ptr<Bone>> bones;
@@ -16,4 +18,8 @@ struct SkeletalMesh
 	void SetAnimation(const char* animationName);
 
 	void DrawWireframe(float frameTime, int key);
+
+	void Draw(float frameTime, int key);
+
+	std::unique_ptr<Animation> currentAnimation = nullptr;
 };

@@ -20,8 +20,6 @@ class CSimulation : public ISimulation
 
 	virtual void Init() override
 	{
-		system("PAUSE");
-
 		int spine01 =	GetSkeletonBoneIndex("spine_01");
 		int spineParent = GetSkeletonBoneParentIndex(spine01);
 		const char* spineParentName = GetSkeletonBoneName(spineParent);
@@ -41,18 +39,16 @@ class CSimulation : public ISimulation
 
 	virtual void Update(float frameTime) override
 	{
-		// X axis
+		// Gizmo
 		DrawLine(0, 0, 0, 100, 0, 0, 1, 0, 0);
-
-		// Y axis
 		DrawLine(0, 0, 0, 0, 100, 0, 0, 1, 0);
-
-		// Z axis
 		DrawLine(0, 0, 0, 0, 0, 100, 0, 0, 1);
 
-		skeleton.DrawWireframe(frame, key);
+		float animationSpeed = 30.f;
+		frame += frameTime * animationSpeed;
 
-		frame += frameTime;
+		skeleton.DrawWireframe(frame, key);
+		skeleton.Draw(frame, key);
 
 		if (frame < 1.f)
 			return;
@@ -60,6 +56,12 @@ class CSimulation : public ISimulation
 		frame = 0.f;
 
 		key++;
+
+		if (key % 50 == 0)
+			skeleton.SetAnimation("ThirdPersonWalk.anim");
+		
+		if (key% 100 == 0)
+			skeleton.SetAnimation("ThirdPersonRun.anim");
 	}
 };
 

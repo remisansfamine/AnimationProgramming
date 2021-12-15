@@ -83,7 +83,7 @@ inline Maths::Quaternion Maths::quaternionNormalizedlerp(Quaternion q1, Quaterni
     return quaternionLerp(q1, q2, amount).normalized();
 }
 
-inline Maths::Quaternion Maths::Slerp(float lambda, const Quaternion& a, const Quaternion& b)
+inline Maths::Quaternion Maths::slerp(float lambda, const Quaternion& a, const Quaternion& b)
 {
     float cosHalfTheta = a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;
 
