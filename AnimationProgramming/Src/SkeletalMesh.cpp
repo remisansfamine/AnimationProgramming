@@ -8,36 +8,80 @@ void SkeletalMesh::Create()
 	for (size_t i = 0; i < GetSkeletonBoneCount() - 7; i++)
 	{
 		bones[i] = std::make_unique<Bone>(i);
+		Bone* bone = bones[i].get();
 
 		size_t parentID = GetSkeletonBoneParentIndex(i);
 
 		if (parentID == -1)
+		{
+			root = bone;
 			continue;
+		}
 
-		Bone* bone = bones[i].get();
+		Bone* parent = bones[parentID].get();
 
-		bone->parent = bones[parentID].get();
-
-		bone->localRestTransform = bone->GetLocalRestTransform();
-		bone->globalRestTransformInv = invert(bone->GetGlobalRestTransform());
+		bone->SetParent(parent);
 	}
 }
 
-void SkeletalMesh::SetAnimation(const char* animationName)
+void SkeletalMesh::SetAnimation(const char* animationName, float speed, float newCrossfadeDuration)
 {
-	currentAnimation = std::make_unique<Animation>(animationName);
+	crossfadeDuration = newCrossfadeDuration;
+
+	if (enterAnimation)
+	{
+		exitAnimation = nullptr;
+		exitAnimation = std::move(enterAnimation);
+	}
+
+	enterAnimation = std::make_unique<Animation>(animationName, speed);
+
+	if (exitAnimation)
+		normalizedTimeScale = enterAnimation->duration / exitAnimation->duration;
 }
 
-void SkeletalMesh::DrawWireframe(float frameTime, int key)
+void SkeletalMesh::ResetCrossfade()
 {
-	if (!currentAnimation)
-		return;
+	currentCrossfadeTime = 0.f;
+	crossfadeAlpha = 0.f;
+	crossfadeDuration = 0.f;
 
-	float zOffset = -50.f;
+	exitAnimation = nullptr;
 
-	int animKey = key % currentAnimation->frameCount;
-	int nextKey = (key + 1) % currentAnimation->frameCount;
+	normalizedTimeScale = 1.f;
+	enterAnimation->timeScale = 1.f;
+}
 
+void SkeletalMesh::Update(float deltaTime)
+{
+	if (exitAnimation)
+	{
+		currentCrossfadeTime += deltaTime;
+
+		if (currentCrossfadeTime > crossfadeDuration)
+		{
+			ResetCrossfade();
+		}
+		else
+		{
+			crossfadeAlpha = currentCrossfadeTime / crossfadeDuration;
+
+			enterAnimation->timeScale = lerp(crossfadeAlpha, normalizedTimeScale, 1.f);
+			exitAnimation->SetFrame(deltaTime);
+		}
+	}
+
+	enterAnimation->SetFrame(deltaTime);
+
+	for (auto& [boneID, bone] : bones)
+		bone->isDirty = true;
+
+	for (auto& [boneID, bone] : bones)
+		bone->globalAnimTransform = bone->GetGlobalAnimTransform(enterAnimation.get(), exitAnimation.get(), crossfadeAlpha);
+}
+
+void SkeletalMesh::DrawWireframe(const Vector3f& offset)
+{
 	for (auto& [boneID, bone] : bones)
 	{
 		Bone* parent = bone->parent;
@@ -45,33 +89,22 @@ void SkeletalMesh::DrawWireframe(float frameTime, int key)
 		if (!parent)
 			continue;
 
-		Vector3f currentPos = bone->GetGlobalAnimTransform(currentAnimation.get(), frameTime, animKey, nextKey).getPosition();
-		Vector3f parentPos = parent->GetGlobalAnimTransform(currentAnimation.get(), frameTime, animKey, nextKey).getPosition();
+		Vector3f currentPos = bone->globalAnimTransform.getPosition() + offset;
+		Vector3f parentPos = parent->globalAnimTransform.getPosition() + offset;
 
-		if (!parent->parent)
-			DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 0, 1, 0);
-		else
-			DrawLine(currentPos.x, currentPos.y + zOffset, currentPos.z, parentPos.x, parentPos.y + zOffset, parentPos.z, 1, 0, 0);
+		bool isRoot = parent == root;
+
+		DrawLine(currentPos.x, currentPos.y, currentPos.z, parentPos.x, parentPos.y, parentPos.z, !isRoot, isRoot, 0);
 	}
 }
 
-void SkeletalMesh::Draw(float frameTime, int key)
+void SkeletalMesh::DrawMesh(const Vector3f& offset)
 {
-	if (!currentAnimation)
-		return;
-
-	int animKey = key % currentAnimation->frameCount;
-	int nextKey = (key + 1) % currentAnimation->frameCount;
-
 	std::vector<Mat4x4> inversedMatrices;
-	inversedMatrices.reserve((bones.size()));
+	inversedMatrices.reserve(bones.size());
 
 	for (auto& [boneID, bone] : bones)
-	{
-		Mat4x4 finalMat = bone->GetGlobalAnimTransform(currentAnimation.get(), frameTime, animKey, nextKey) * bone->globalRestTransformInv;
-
-		inversedMatrices.emplace_back(Maths::transpose(finalMat));
-	}
+		inversedMatrices.emplace_back(Maths::transpose(translate(offset) * bone->globalAnimTransform * bone->globalRestTransformInv));
 
 	SetSkinningPose((const float*)inversedMatrices.data(), inversedMatrices.size());
 }

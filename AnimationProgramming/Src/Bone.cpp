@@ -4,10 +4,24 @@
 
 #include "../Include/Animation.hpp"
 
-Bone::Bone(size_t ID, Bone* parent)
-	: ID(ID), parent(parent)
+Bone::Bone(size_t ID)
+	: ID(ID)
 {
+	localRestTransform = GetLocalRestTransform();
+}
 
+void Bone::SetParent(Bone* newParent)
+{
+	parent = newParent;
+
+	if (!newParent)
+	{
+		globalRestTransform = globalRestTransformInv = mat4x4Identity();
+		return;
+	}
+
+	globalRestTransform = GetGlobalRestTransform();
+	globalRestTransformInv = invert(globalRestTransform);
 }
 
 Mat4x4 Bone::GetLocalRestTransform()
@@ -22,24 +36,50 @@ Mat4x4 Bone::GetLocalRestTransform()
 
 Mat4x4 Bone::GetGlobalRestTransform()
 {
-	if (!parent)
-		return localRestTransform;
+	if (!isDirty)
+		return globalRestTransform;
 
-	return parent->GetGlobalRestTransform() * localRestTransform;
+	if (!parent)
+		globalRestTransform = localRestTransform;
+	else 
+		globalRestTransform = parent->GetGlobalRestTransform() * localRestTransform;
+
+	isDirty = false;
+
+	return globalRestTransform;
 }
 
-Mat4x4 Bone::GetLocalAnimTransform(Animation* animation, float frameTime, int keyFrameIndex, int nextKeyFrame)
+Mat4x4 Bone::GetLocalAnimTransform(Animation* enterAnimation, Animation* exitAnimation, float crossfadeAlpha)
 {
-	Transform& currentTransform = animation->keyFrames[keyFrameIndex].palette[ID];
-	Transform& nextTransform = animation->keyFrames[nextKeyFrame].palette[ID];
+	Transform& enterCurrTransform = enterAnimation->GetCurrentBoneTransform(ID);
+	Transform& enterNextTransform = enterAnimation->GetNextBoneTransform(ID);
 
-	return Transform::blend(frameTime, currentTransform, nextTransform).getMatrix();
+	Transform enterTransform = Transform::blend(fabsf(enterAnimation->frame), enterCurrTransform, enterNextTransform);
+
+	if (!exitAnimation)
+		return enterTransform.getMatrix();
+
+	Transform& exitCurrTransform = exitAnimation->GetCurrentBoneTransform(ID);
+	Transform& exitNextTransform = exitAnimation->GetNextBoneTransform(ID);
+
+	Transform exitTransform = Transform::blend(fabsf(exitAnimation->frame), exitCurrTransform, exitNextTransform);
+
+	return Transform::blend(crossfadeAlpha, exitTransform, enterTransform).getMatrix();
 }
 
-Mat4x4 Bone::GetGlobalAnimTransform(Animation* animation, float frameTime, int keyFrame, int nextKeyFrame)
+Mat4x4 Bone::GetGlobalAnimTransform(Animation* enterAnimation, Animation* exitAnimation, float crossfadeAlpha)
 {
-	if (!parent)
-		return localRestTransform * GetLocalAnimTransform(animation, frameTime, keyFrame, nextKeyFrame);
+	if (!isDirty)
+		return globalAnimTransform;
 
-	return parent->GetGlobalAnimTransform(animation, frameTime, keyFrame, nextKeyFrame) * localRestTransform * GetLocalAnimTransform(animation, frameTime, keyFrame, nextKeyFrame);
+	Mat4x4 localAnim = localRestTransform * GetLocalAnimTransform(enterAnimation, exitAnimation, crossfadeAlpha);
+
+	if (!parent)
+		globalAnimTransform = localAnim;
+	else
+		globalAnimTransform = parent->GetGlobalAnimTransform(enterAnimation, exitAnimation, crossfadeAlpha) * localAnim;
+
+	isDirty = false;
+
+	return globalAnimTransform;
 }

@@ -33,4 +33,19 @@ namespace Maths
 	{
 		return x * (S(1) - a) + y * a;
 	}
+
+	template <typename T>
+	T loop(const T& in, const T& min, const T& max)
+	{
+		if (in > max) return min;
+		if (in < min) return max;
+
+		return in;
+	}
+
+	template <typename T>
+	char sign(const T& val)
+	{
+		return (T(0) < val) - (val < T(0));
+	}
 }

@@ -34,8 +34,9 @@ class CSimulation : public ISimulation
 
 		skeleton.Create();
 
-		skeleton.SetAnimation("ThirdPersonWalk.anim");
+		skeleton.SetAnimation("ThirdPersonWalk.anim", 30.f, 0.1f);
 	}
+		int animCount = 0;
 
 	virtual void Update(float frameTime) override
 	{
@@ -44,24 +45,29 @@ class CSimulation : public ISimulation
 		DrawLine(0, 0, 0, 0, 100, 0, 0, 1, 0);
 		DrawLine(0, 0, 0, 0, 0, 100, 0, 0, 1);
 
-		float animationSpeed = 30.f;
-		frame += frameTime * animationSpeed;
+		frame += frameTime;
 
-		skeleton.DrawWireframe(frame, key);
-		skeleton.Draw(frame, key);
+		skeleton.Update(frameTime);
 
-		if (frame < 1.f)
-			return;
+		skeleton.DrawMesh(Vector3f(0.f, 50.f, 0.f));
+		skeleton.DrawWireframe(Vector3f(0.f, -50.f, 0.f));
 
-		frame = 0.f;
-
-		key++;
-
-		if (key % 50 == 0)
-			skeleton.SetAnimation("ThirdPersonWalk.anim");
-		
-		if (key% 100 == 0)
-			skeleton.SetAnimation("ThirdPersonRun.anim");
+		if (frame >= 5.f && animCount < 1)
+		{
+			skeleton.SetAnimation("ThirdPersonRun.anim", -30.f, 0.3f);
+			animCount++;
+		}
+		else if (frame >= 10.f && animCount < 2)
+		{
+			skeleton.SetAnimation(nullptr, 30.f, 0.3f);
+			animCount++;
+		}
+		else if (frame >= 15.f && animCount < 3)
+		{
+			skeleton.SetAnimation("ThirdPersonWalk.anim", 30.f, 0.3f);
+			animCount = 0;
+			frame = 0.f;
+		}
 	}
 };
 

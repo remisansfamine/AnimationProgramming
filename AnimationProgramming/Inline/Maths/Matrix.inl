@@ -69,30 +69,6 @@ namespace Maths
         return (1.0f / det) * result;
     }
 
-    inline float determinant(const Mat4x4& in)
-    {
-        // Cache the matrix values (speed optimization)
-        float a00 = in.e[0], a01 = in.e[1], a02 = in.e[2], a03 = in.e[3];
-        float a10 = in.e[4], a11 = in.e[5], a12 = in.e[6], a13 = in.e[7];
-        float a20 = in.e[8], a21 = in.e[9], a22 = in.e[10], a23 = in.e[11];
-        float a30 = in.e[12], a31 = in.e[13], a32 = in.e[14], a33 = in.e[15];
-
-        float b00 = a00 * a11 - a01 * a10;
-        float b01 = a00 * a12 - a02 * a10;
-        float b02 = a00 * a13 - a03 * a10;
-        float b03 = a01 * a12 - a02 * a11;
-        float b04 = a01 * a13 - a03 * a11;
-        float b05 = a02 * a13 - a03 * a12;
-        float b06 = a20 * a31 - a21 * a30;
-        float b07 = a20 * a32 - a22 * a30;
-        float b08 = a20 * a33 - a23 * a30;
-        float b09 = a21 * a32 - a22 * a31;
-        float b10 = a21 * a33 - a23 * a31;
-        float b11 = a22 * a33 - a23 * a32;
-
-        return (b00 * b11 - b01 * b10 + b02 * b09 + b03 * b08 - b04 * b07 + b05 * b06);
-    }
-
     inline Mat4x4 operator*(const float& a, const Mat4x4& b)
     {
         Mat4x4 to_return = mat4x4Identity();

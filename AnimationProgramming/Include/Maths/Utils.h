@@ -38,6 +38,12 @@ namespace Maths
 	//	-------------------------------------------------------------------
 	template <typename T, typename S>
 	T lerp(S a, const T& x, const T& y);
+
+	template <typename T>
+	T loop(const T& in, const T& min, const T& max);
+
+	template <typename T>
+	char sign(const T& val);
 }
 
 #include "../../Inline/Maths/Utils.inl"

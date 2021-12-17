@@ -6,16 +6,6 @@ namespace Maths
 {
     /*========================    Matrix 4    =========================*/
 
-    Mat4x4 scale(const Vector3f& scale)
-    {
-        return {
-            scale.x, 0.f, 0.f, 0.f,
-            0.f, scale.y, 0.f, 0.f,
-            0.f, 0.f, scale.z, 0.f,
-            0.f, 0.f, 0.f, 1.f,
-        };
-    }
-
     //  Translation
     Mat4x4 translate(const Vector3f& in)
     {

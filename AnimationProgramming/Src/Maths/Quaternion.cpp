@@ -208,39 +208,6 @@ Maths::Vector3f Maths::vector3RotateByQuaternion(const Vector3f& v, const Quater
     };
 }
 
-// !! NOT VERIFIED YET
-Maths::Quaternion Maths::Mat4x4::toQuaternion()
-{
-    Quaternion result;
-
-    if ((e[0] > e[5]) && (e[0] > e[10]))
-    {
-        float s = sqrtf(1.0f + e[0] - e[5] - e[10]) * 2;
-        result.x = 0.25f * s;
-        result.y = (e[4] + e[1]) / s;
-        result.z = (e[2] + e[8]) / s;
-        result.w = (e[9] - e[6]) / s;
-    }
-    else if (e[5] > e[10])
-    {
-        float s = sqrtf(1.0f + e[5] - e[0] - e[10]) * 2;
-        result.x = (e[4] + e[1]) / s;
-        result.y = 0.25f * s;
-        result.z = (e[9] + e[6]) / s;
-        result.w = (e[2] - e[8]) / s;
-    }
-    else
-    {
-        float s = sqrtf(1.0f + e[10] - e[0] - e[5]) * 2;
-        result.x = (e[2] + e[8]) / s;
-        result.y = (e[9] + e[6]) / s;
-        result.z = 0.25f * s;
-        result.w = (e[4] - e[1]) / s;
-    }
-
-    return result;
-}
-
 Maths::Vector3f Maths::Mat4x4::getPosition()
 {
     return { e[3], e[7], e[11] };

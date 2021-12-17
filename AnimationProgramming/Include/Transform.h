@@ -5,8 +5,8 @@
 
 struct Transform
 {
-	Vector3f position;
-	Quaternion rotation;
+	Vector3f position = Vector3f::zero();
+	Quaternion rotation = quaternionIdentity();
 
 	static Transform blend(float lambda, const Transform& a, const Transform& b);
 

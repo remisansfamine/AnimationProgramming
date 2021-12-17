@@ -22,10 +22,6 @@ namespace Maths
 		//	Functions
 		//	---------
 
-		//	Return a quaternion from the current Matrix
-		//	Parameters : none
-		//	-----------------
-		Quaternion toQuaternion();
 		Vector3f getPosition();
 	};
 
@@ -38,19 +34,11 @@ namespace Maths
 	//	----------------------
 	Mat4x4 mat4x4Identity();
 
-	//	Return a scaled Mat4x
-	//	Parameters : const Vector3f scale
-	//	--------------------------------- 
-	Mat4x4 scale(const Vector3f& scale);
-
 	Mat4x4 translate(const Vector3f& a);
 
 	Mat4x4 transpose(const Mat4x4& in);
 
 	Mat4x4 invert(const Mat4x4& in);
-	
-	float determinant(const Mat4x4& in);
-
 
 	//	Operators
 	//	---------
