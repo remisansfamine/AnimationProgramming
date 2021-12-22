@@ -2,8 +2,7 @@
 
 #include "../Engine.h"
 
-Animation::Animation(const char* animationName, float speed)
-	: speed(speed)
+Animation::Animation(const char* animationName)
 {
 	size_t boneCount = GetSkeletonBoneCount() - 7;
 
@@ -13,8 +12,6 @@ Animation::Animation(const char* animationName, float speed)
 
 		frameCount = GetAnimKeyCount(animationName);
 		keyFrames.reserve(frameCount);
-
-		duration = (float)frameCount / fabsf(speed);
 
 		for (size_t i = 0u; i < frameCount; i++)
 		{
@@ -47,7 +44,14 @@ Animation::Animation(const char* animationName, float speed)
 	}
 }
 
-void Animation::SetFrame(float deltaTime)
+AnimationInstance::AnimationInstance(std::shared_ptr<Animation> animation, float speed)
+	: speed(speed), animation(animation)
+{
+	if (animation->frameCount > 1u)
+		duration = (float)animation->frameCount / fabsf(speed);
+}
+
+void AnimationInstance::SetFrame(float deltaTime)
 {
 	frame += deltaTime * timeScale * speed;
 
@@ -56,16 +60,21 @@ void Animation::SetFrame(float deltaTime)
 
 	frame = 0.f;
 
-	currentKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)frameCount - 1);
-	nextKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)frameCount - 1);
+	currentKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)animation->frameCount - 1);
+	nextKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)animation->frameCount - 1);
 }
 
-Transform& Animation::GetCurrentBoneTransform(size_t boneID)
+Transform& AnimationInstance::GetCurrentBoneTransform(size_t boneID)
 {
-	return keyFrames[currentKeyFrame].palette[boneID];
+	return animation->keyFrames[currentKeyFrame].palette[boneID];
 }
 
-Transform& Animation::GetNextBoneTransform(size_t boneID)
+Transform& AnimationInstance::GetNextBoneTransform(size_t boneID)
 {
-	return keyFrames[nextKeyFrame].palette[boneID];
+	return animation->keyFrames[nextKeyFrame].palette[boneID];
+}
+
+Transform AnimationInstance::GetBlendedBoneTransform(size_t boneID)
+{
+	return Transform::blend(fabsf(frame), GetCurrentBoneTransform(boneID), GetNextBoneTransform(boneID));
 }

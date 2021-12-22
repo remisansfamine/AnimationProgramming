@@ -22,7 +22,7 @@ struct SkeletalMesh
 
 	void Create();
 
-	void SetAnimation(const char* animationName, float speed, float newCrossfadeDuration);
+	void SetAnimation(std::shared_ptr<Animation>, float speed, float newCrossfadeDuration);
 
 	void ResetCrossfade();
 	void Update(float deltaTime);
@@ -31,6 +31,6 @@ struct SkeletalMesh
 
 	void DrawMesh(const Vector3f& offset = Vector3f::zero());
 
-	std::unique_ptr<Animation> enterAnimation = nullptr;
-	std::unique_ptr<Animation> exitAnimation = nullptr;
+	std::unique_ptr<AnimationInstance> enterAnimation = nullptr;
+	std::unique_ptr<AnimationInstance> exitAnimation = nullptr;
 };

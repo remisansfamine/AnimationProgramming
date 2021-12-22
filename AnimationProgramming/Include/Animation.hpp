@@ -18,6 +18,15 @@ public:
 
 	size_t frameCount = 1u;
 
+	Animation(const char* animation);
+};
+
+struct AnimationInstance
+{
+	AnimationInstance(std::shared_ptr<Animation> animation, float speed);
+
+	std::shared_ptr<Animation> animation;
+
 	int currentKeyFrame = 0;
 	int nextKeyFrame = 0;
 
@@ -27,10 +36,10 @@ public:
 	float speed = 30.f;
 	float duration = 1.f;
 
-	Animation(const char* animation, float speed);
-
 	void SetFrame(float deltaTime);
 
 	Transform& GetCurrentBoneTransform(size_t boneID);
 	Transform& GetNextBoneTransform(size_t boneID);
+
+	Transform GetBlendedBoneTransform(size_t boneID);
 };

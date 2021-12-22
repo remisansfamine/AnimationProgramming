@@ -18,6 +18,10 @@ class CSimulation : public ISimulation
 
 	SkeletalMesh skeleton;
 
+	std::shared_ptr<Animation> tposeAnim;
+	std::shared_ptr<Animation> walkAnim;
+	std::shared_ptr<Animation> runAnim;
+
 	virtual void Init() override
 	{
 		int spine01 =	GetSkeletonBoneIndex("spine_01");
@@ -32,9 +36,13 @@ class CSimulation : public ISimulation
 		printf("Anim key count : %ld\n", keyCount);
 		printf("Anim key : pos(%.2f,%.2f,%.2f) rotation quat(%.10f,%.10f,%.10f,%.10f)\n", posX, posY, posZ, quatW, quatX, quatY, quatZ);
 
+		tposeAnim = std::make_shared<Animation>(nullptr);
+		walkAnim = std::make_shared<Animation>("ThirdPersonWalk.anim");
+		runAnim = std::make_shared<Animation>("ThirdPersonRun.anim");
+
 		skeleton.Create();
 
-		skeleton.SetAnimation("ThirdPersonWalk.anim", 30.f, 0.1f);
+		skeleton.SetAnimation(tposeAnim, 30.f, 0.1f);
 	}
 		int animCount = 0;
 
@@ -54,17 +62,17 @@ class CSimulation : public ISimulation
 
 		if (frame >= 5.f && animCount < 1)
 		{
-			skeleton.SetAnimation("ThirdPersonRun.anim", -30.f, 0.3f);
+			skeleton.SetAnimation(runAnim, -30.f, 0.3f);
 			animCount++;
 		}
 		else if (frame >= 10.f && animCount < 2)
 		{
-			skeleton.SetAnimation(nullptr, 30.f, 0.3f);
+			skeleton.SetAnimation(tposeAnim, 30.f, 0.3f);
 			animCount++;
 		}
 		else if (frame >= 15.f && animCount < 3)
 		{
-			skeleton.SetAnimation("ThirdPersonWalk.anim", 30.f, 0.3f);
+			skeleton.SetAnimation(walkAnim, 30.f, 0.3f);
 			animCount = 0;
 			frame = 0.f;
 		}

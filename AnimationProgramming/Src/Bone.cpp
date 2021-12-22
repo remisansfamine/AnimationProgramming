@@ -49,25 +49,19 @@ Mat4x4 Bone::GetGlobalRestTransform()
 	return globalRestTransform;
 }
 
-Mat4x4 Bone::GetLocalAnimTransform(Animation* enterAnimation, Animation* exitAnimation, float crossfadeAlpha)
+Mat4x4 Bone::GetLocalAnimTransform(AnimationInstance* enterAnimation, AnimationInstance* exitAnimation, float crossfadeAlpha)
 {
-	Transform& enterCurrTransform = enterAnimation->GetCurrentBoneTransform(ID);
-	Transform& enterNextTransform = enterAnimation->GetNextBoneTransform(ID);
-
-	Transform enterTransform = Transform::blend(fabsf(enterAnimation->frame), enterCurrTransform, enterNextTransform);
+	Transform enterTransform = enterAnimation->GetBlendedBoneTransform(ID);
 
 	if (!exitAnimation)
 		return enterTransform.getMatrix();
 
-	Transform& exitCurrTransform = exitAnimation->GetCurrentBoneTransform(ID);
-	Transform& exitNextTransform = exitAnimation->GetNextBoneTransform(ID);
-
-	Transform exitTransform = Transform::blend(fabsf(exitAnimation->frame), exitCurrTransform, exitNextTransform);
+	Transform exitTransform = exitAnimation->GetBlendedBoneTransform(ID);
 
 	return Transform::blend(crossfadeAlpha, exitTransform, enterTransform).getMatrix();
 }
 
-Mat4x4 Bone::GetGlobalAnimTransform(Animation* enterAnimation, Animation* exitAnimation, float crossfadeAlpha)
+Mat4x4 Bone::GetGlobalAnimTransform(AnimationInstance* enterAnimation, AnimationInstance* exitAnimation, float crossfadeAlpha)
 {
 	if (!isDirty)
 		return globalAnimTransform;

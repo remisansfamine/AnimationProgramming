@@ -26,8 +26,8 @@ struct Bone
 
 	Mat4x4 GetGlobalRestTransform();
 
-	Mat4x4 GetLocalAnimTransform(class Animation* enterAnimation, class Animation* exitAnimation, float crossfadeAlpha);
+	Mat4x4 GetLocalAnimTransform(class AnimationInstance* enterAnimation, class AnimationInstance* exitAnimation, float crossfadeAlpha);
 
-	Mat4x4 GetGlobalAnimTransform(class Animation* enterAnimation, class Animation* exitAnimation, float crossfadeAlpha);
+	Mat4x4 GetGlobalAnimTransform(class AnimationInstance* enterAnimation, class AnimationInstance* exitAnimation, float crossfadeAlpha);
 
 };

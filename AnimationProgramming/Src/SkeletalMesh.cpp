@@ -24,7 +24,7 @@ void SkeletalMesh::Create()
 	}
 }
 
-void SkeletalMesh::SetAnimation(const char* animationName, float speed, float newCrossfadeDuration)
+void SkeletalMesh::SetAnimation(std::shared_ptr<Animation> newAnimation, float speed, float newCrossfadeDuration)
 {
 	crossfadeDuration = newCrossfadeDuration;
 
@@ -34,7 +34,7 @@ void SkeletalMesh::SetAnimation(const char* animationName, float speed, float ne
 		exitAnimation = std::move(enterAnimation);
 	}
 
-	enterAnimation = std::make_unique<Animation>(animationName, speed);
+	enterAnimation = std::make_unique<AnimationInstance>(newAnimation, speed);
 
 	if (exitAnimation)
 		normalizedTimeScale = enterAnimation->duration / exitAnimation->duration;
