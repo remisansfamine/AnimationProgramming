@@ -36,7 +36,11 @@ struct AnimationInstance
 	float speed = 30.f;
 	float duration = 1.f;
 
+	bool evenFrameCount = false;
+
 	void SetFrame(float deltaTime);
+
+	void DrawTimeline(const Vector3f& offset = Vector3f::zero());
 
 	Transform& GetCurrentBoneTransform(size_t boneID);
 	Transform& GetNextBoneTransform(size_t boneID);

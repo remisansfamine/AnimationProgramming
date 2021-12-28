@@ -59,6 +59,14 @@ class CSimulation : public ISimulation
 
 		skeleton.DrawMesh(Vector3f(0.f, 50.f, 0.f));
 		skeleton.DrawWireframe(Vector3f(0.f, -50.f, 0.f));
+		
+		if (skeleton.exitAnimation)
+		{
+			skeleton.enterAnimation->DrawTimeline(Vector3f(0.f, 0.f, 220.f));
+			skeleton.exitAnimation->DrawTimeline(Vector3f(0.f, 0.f, 200.f));
+		}
+		else
+			skeleton.enterAnimation->DrawTimeline(Vector3f(0.f, 0.f, 200.f));
 
 		if (frame >= 5.f && animCount < 1)
 		{
