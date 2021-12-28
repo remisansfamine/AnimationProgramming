@@ -208,7 +208,7 @@ Maths::Vector3f Maths::vector3RotateByQuaternion(const Vector3f& v, const Quater
     };
 }
 
-Maths::Vector3f Maths::Mat4x4::getPosition()
+Maths::Vector3f Maths::Mat4x4::getPosition() const
 {
     return { e[3], e[7], e[11] };
 }

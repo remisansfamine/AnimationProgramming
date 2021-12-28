@@ -7,43 +7,55 @@
 struct KeyFrame
 {
 	std::vector<Transform> palette;
+
+	const Transform& GetBoneTransform(size_t boneID) const { return palette[boneID]; }
 };
 
 class Animation
 {
-public:
-	std::vector<KeyFrame> keyFrames;
+private:
+	size_t frameCount = 1u;
 
 	std::string name;
 
-	size_t frameCount = 1u;
+	std::vector<KeyFrame> keyFrames;
 
+public:
 	Animation(const char* animation);
+
+	size_t GetFrameCount() const { return frameCount; }
+
+	std::string GetName() const { return name; }
+
+	const KeyFrame& GetKeyFrameAt(size_t keyCount) const { return keyFrames[keyCount]; }
 };
 
 struct AnimationInstance
 {
-	AnimationInstance(std::shared_ptr<Animation> animation, float speed);
-
+private:
 	std::shared_ptr<Animation> animation;
 
 	int currentKeyFrame = 0;
 	int nextKeyFrame = 0;
 
 	float frame = 0.f;
-	float timeScale = 1.f;
 
 	float speed = 30.f;
-	float duration = 1.f;
 
 	bool evenFrameCount = false;
 
+public:
+	float timeScale = 1.f;
+	float duration = 1.f;
+
+	AnimationInstance(std::shared_ptr<Animation> animation, float speed);
+
 	void SetFrame(float deltaTime);
 
-	void DrawTimeline(const Vector3f& offset = Vector3f::zero());
+	void DrawTimeline(const Vector3f& offset = Vector3f::zero()) const;
 
-	Transform& GetCurrentBoneTransform(size_t boneID);
-	Transform& GetNextBoneTransform(size_t boneID);
+	const Transform& GetCurrentBoneTransform(size_t boneID) const;
+	const Transform& GetNextBoneTransform(size_t boneID) const;
 
-	Transform GetBlendedBoneTransform(size_t boneID);
+	Transform GetBlendedBoneTransform(size_t boneID) const;
 };

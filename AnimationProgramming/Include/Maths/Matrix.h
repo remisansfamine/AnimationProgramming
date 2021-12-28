@@ -22,7 +22,7 @@ namespace Maths
 		//	Functions
 		//	---------
 
-		Vector3f getPosition();
+		Vector3f getPosition() const;
 	};
 
 	//	Mat4x4 Functions

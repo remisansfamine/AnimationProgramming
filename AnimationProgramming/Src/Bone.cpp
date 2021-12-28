@@ -77,3 +77,8 @@ Mat4x4 Bone::GetGlobalAnimTransform(AnimationInstance* enterAnimation, Animation
 
 	return globalAnimTransform;
 }
+
+void Bone::ComputeAnimTransform(AnimationInstance* enterAnimation, AnimationInstance* exitAnimation, float crossfadeAlpha)
+{
+	globalAnimTransform = GetGlobalAnimTransform(enterAnimation, exitAnimation, crossfadeAlpha);
+}

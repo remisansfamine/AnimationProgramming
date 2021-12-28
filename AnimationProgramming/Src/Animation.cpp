@@ -47,10 +47,10 @@ Animation::Animation(const char* animationName)
 AnimationInstance::AnimationInstance(std::shared_ptr<Animation> animation, float speed)
 	: speed(speed), animation(animation)
 {
-	if (animation->frameCount > 1u)
-		duration = (float)animation->frameCount / fabsf(speed);
+	if (animation->GetFrameCount() > 1u)
+		duration = (float)animation->GetFrameCount() / fabsf(speed);
 
-	if (animation->frameCount % 2 == 0)
+	if (animation->GetFrameCount() % 2 == 0)
 		evenFrameCount = true;
 }
 
@@ -63,24 +63,24 @@ void AnimationInstance::SetFrame(float deltaTime)
 
 	frame = 0.f;
 
-	currentKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)animation->frameCount - 1);
-	nextKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)animation->frameCount - 1);
+	currentKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)animation->GetFrameCount() - 1);
+	nextKeyFrame = loop(currentKeyFrame + sign(speed), 0, (int)animation->GetFrameCount() - 1);
 }
 
-void AnimationInstance::DrawTimeline(const Vector3f& offset)
+void AnimationInstance::DrawTimeline(const Vector3f& offset) const
 {
 	Vector3f lineTopPosition = Vector3f::zero();
 	float space = 5.f;
 
-	lineTopPosition = offset - Vector3f::xAxis() * (1 / timeScale) * ((animation->frameCount / 2) * space + (int)evenFrameCount * space * 0.5f);
+	lineTopPosition = offset - Vector3f::xAxis() * (1 / timeScale) * ((animation->GetFrameCount() * 0.5f) * space + (int)evenFrameCount * space * 0.5f);
 
-	if (animation->frameCount == 1u)
+	if (animation->GetFrameCount() == 1u)
 	{
 		DrawLine(lineTopPosition.x - 15.f, lineTopPosition.y, lineTopPosition.z, lineTopPosition.x + 15.f, lineTopPosition.y, lineTopPosition.z, 0.2f, 0.2f, 0.2f);
 		return;
 	}
 
-	for (size_t i = 0u; i < animation->frameCount; ++i)
+	for (size_t i = 0u; i < animation->GetFrameCount(); ++i)
 	{
 		if (i == currentKeyFrame)
 		{
@@ -96,17 +96,17 @@ void AnimationInstance::DrawTimeline(const Vector3f& offset)
 
 }
 
-Transform& AnimationInstance::GetCurrentBoneTransform(size_t boneID)
+const Transform& AnimationInstance::GetCurrentBoneTransform(size_t boneID) const
 {
-	return animation->keyFrames[currentKeyFrame].palette[boneID];
+	return animation->GetKeyFrameAt(currentKeyFrame).GetBoneTransform(boneID);
 }
 
-Transform& AnimationInstance::GetNextBoneTransform(size_t boneID)
+const Transform& AnimationInstance::GetNextBoneTransform(size_t boneID) const
 {
-	return animation->keyFrames[nextKeyFrame].palette[boneID];
+	return animation->GetKeyFrameAt(nextKeyFrame).GetBoneTransform(boneID);
 }
 
-Transform AnimationInstance::GetBlendedBoneTransform(size_t boneID)
+Transform AnimationInstance::GetBlendedBoneTransform(size_t boneID) const
 {
 	return Transform::blend(fabsf(frame), GetCurrentBoneTransform(boneID), GetNextBoneTransform(boneID));
 }

@@ -5,8 +5,9 @@
 
 #include "../stdafx.h"
 
-struct Bone
+class Bone
 {
+private:
 	Mat4x4 localRestTransform = mat4x4Identity();
 	Mat4x4 globalRestTransform = mat4x4Identity();
 	Mat4x4 globalRestTransformInv = mat4x4Identity();
@@ -18,10 +19,6 @@ struct Bone
 
 	size_t ID = -1;
 
-	Bone(size_t ID);
-
-	void SetParent(Bone* newParent);
-
 	Mat4x4 GetLocalRestTransform();
 
 	Mat4x4 GetGlobalRestTransform();
@@ -30,4 +27,18 @@ struct Bone
 
 	Mat4x4 GetGlobalAnimTransform(class AnimationInstance* enterAnimation, class AnimationInstance* exitAnimation, float crossfadeAlpha);
 
+public:
+	Bone(size_t ID);
+
+	void SetDirty() { isDirty = true; }
+
+	Bone* GetParent() const { return parent; }
+
+	void SetParent(Bone* newParent);
+
+	void ComputeAnimTransform(AnimationInstance* enterAnimation, AnimationInstance* exitAnimation, float crossfadeAlpha);
+
+	const Mat4x4& GetGlobalAnimTransform() const { return globalAnimTransform; }
+
+	Mat4x4 GetBoneOffsetMatrix() const { return globalAnimTransform * globalRestTransformInv; }
 };

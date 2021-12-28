@@ -6,8 +6,9 @@
 
 #include "../Include/Animation.hpp"
 
-struct SkeletalMesh
+class SkeletalMesh
 {
+private:
 	std::unordered_map<size_t, std::unique_ptr<Bone>> bones;
 
 	Bone* root = nullptr;
@@ -20,17 +21,20 @@ struct SkeletalMesh
 	float crossfadeAlpha = 0.f;
 	float normalizedTimeScale = 1.f;
 
+	void ResetCrossfade();
+
+public:
+	std::unique_ptr<AnimationInstance> enterAnimation = nullptr;
+	std::unique_ptr<AnimationInstance> exitAnimation = nullptr;
+
 	void Create();
 
 	void SetAnimation(std::shared_ptr<Animation>, float speed, float newCrossfadeDuration);
 
-	void ResetCrossfade();
 	void Update(float deltaTime);
 
-	void DrawWireframe(const Vector3f& offset = Vector3f::zero());
+	void DrawWireframe(const Vector3f& offset = Vector3f::zero()) const;
 
-	void DrawMesh(const Vector3f& offset = Vector3f::zero());
+	void DrawMesh(const Vector3f& offset = Vector3f::zero()) const;
 
-	std::unique_ptr<AnimationInstance> enterAnimation = nullptr;
-	std::unique_ptr<AnimationInstance> exitAnimation = nullptr;
 };

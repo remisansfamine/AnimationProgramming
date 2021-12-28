@@ -74,23 +74,23 @@ void SkeletalMesh::Update(float deltaTime)
 	enterAnimation->SetFrame(deltaTime);
 
 	for (auto& [boneID, bone] : bones)
-		bone->isDirty = true;
+		bone->SetDirty();
 
 	for (auto& [boneID, bone] : bones)
-		bone->globalAnimTransform = bone->GetGlobalAnimTransform(enterAnimation.get(), exitAnimation.get(), crossfadeAlpha);
+		bone->ComputeAnimTransform(enterAnimation.get(), exitAnimation.get(), crossfadeAlpha);
 }
 
-void SkeletalMesh::DrawWireframe(const Vector3f& offset)
+void SkeletalMesh::DrawWireframe(const Vector3f& offset) const
 {
 	for (auto& [boneID, bone] : bones)
 	{
-		Bone* parent = bone->parent;
+		Bone* parent = bone->GetParent();
 
 		if (!parent)
 			continue;
 
-		Vector3f currentPos = bone->globalAnimTransform.getPosition() + offset;
-		Vector3f parentPos = parent->globalAnimTransform.getPosition() + offset;
+		Vector3f currentPos = bone->GetGlobalAnimTransform().getPosition() + offset;
+		Vector3f parentPos = parent->GetGlobalAnimTransform().getPosition() + offset;
 
 		bool isRoot = parent == root;
 
@@ -98,13 +98,13 @@ void SkeletalMesh::DrawWireframe(const Vector3f& offset)
 	}
 }
 
-void SkeletalMesh::DrawMesh(const Vector3f& offset)
+void SkeletalMesh::DrawMesh(const Vector3f& offset) const
 {
 	std::vector<Mat4x4> inversedMatrices;
 	inversedMatrices.reserve(bones.size());
 
 	for (auto& [boneID, bone] : bones)
-		inversedMatrices.emplace_back(Maths::transpose(translate(offset) * bone->globalAnimTransform * bone->globalRestTransformInv));
+		inversedMatrices.emplace_back(Maths::transpose(translate(offset) * bone->GetBoneOffsetMatrix()));
 
 	SetSkinningPose((const float*)inversedMatrices.data(), inversedMatrices.size());
 }
