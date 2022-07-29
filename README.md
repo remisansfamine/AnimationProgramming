@@ -9,8 +9,10 @@ The goal of the project is to animate a skeletal mesh using the WhiteBoxEngine.
 
 ## Preview
 <div style="text-align:center">
-![Preview](Preview.gif)
-<div style="text-align:left">
+
+![Preview](Annexe/Preview.gif)
+
+</div>
 
 ## Built with
 Visual Studio 2019
